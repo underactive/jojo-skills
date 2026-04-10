@@ -1,6 +1,6 @@
 # Jojo Skills
 
-Claude Code skills for multi-persona code auditing and prompt engineering.
+Claude Code skills for multi-persona code auditing, prompt engineering, and repository fingerprinting.
 
 ## Skills
 
@@ -40,6 +40,26 @@ Rewrites prompts using the CLEAR framework:
 /jojo-prompt-clear write a function that does auth
 ```
 
+### `/jojo-fingerprint`
+
+Scans a repository and reports its tech stack: languages with percentage distribution, frameworks, test runners, linters, entry points, package manager, monorepo tool, workspace packages, architecture docs, and per-component project structure. Ported from the `kaicho` project's `repo-context` module into a self-contained Node.js script — zero runtime dependencies beyond Node 20+.
+
+Output uses a hybrid rendering strategy to avoid Claude Code's Bash-output collapse behavior: the distribution bar renders as a single ANSI-colored line in the Bash tool output block (under the collapse threshold), while the rest of the report renders inline as markdown in the assistant response. No `ctrl+o` expansion needed.
+
+```
+/jojo-fingerprint                                  # fingerprint current directory
+/jojo-fingerprint ~/code/my-repo                   # fingerprint a specific path
+/jojo-fingerprint /path/to/repo --json             # raw JSON output
+```
+
+The bundled script at `jojo-fingerprint/bin/fingerprint.mjs` also works as a standalone CLI for direct terminal use, with full colorized output in a TTY:
+
+```sh
+node ~/.claude/skills/jojo-fingerprint/bin/fingerprint.mjs ~/code/my-repo
+```
+
+Supported detection ecosystems: JavaScript/TypeScript (package.json), Python (pyproject.toml), Go (go.mod), Rust (Cargo.toml), Java/Kotlin (Gradle, Maven), C#/F# (.NET/MSBuild), C/C++ (CMake, Meson, SCons, PlatformIO), Swift (Package.swift, Xcode projects).
+
 ## Reviewer Tiers
 
 | Tier | Count | Default | Description |
@@ -76,9 +96,12 @@ Copy skill directories to `~/.claude/skills/`:
 cp -r jojo-audit-all ~/.claude/skills/
 cp -r jojo-audit-changes ~/.claude/skills/
 cp -r jojo-prompt-clear ~/.claude/skills/
+cp -r jojo-fingerprint ~/.claude/skills/
 ```
 
-Skills appear as `/jojo-audit-all`, `/jojo-audit-changes`, and `/jojo-prompt-clear` in Claude Code.
+Skills appear as `/jojo-audit-all`, `/jojo-audit-changes`, `/jojo-prompt-clear`, and `/jojo-fingerprint` in Claude Code.
+
+`/jojo-fingerprint` requires Node 20+ on `$PATH`. The other skills have no runtime dependencies.
 
 ## Audit Workflow
 
