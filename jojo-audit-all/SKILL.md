@@ -34,7 +34,15 @@ Examples:
 
 ### 1a. Discover the project structure
 
-Run these commands using the Bash tool:
+Run the following Bash commands in parallel — they are independent.
+
+Fingerprint the repo for metadata (languages, frameworks, test runners, linters, package manager, monorepo tool, components):
+
+```
+node /Users/esison/.claude/skills/jojo-fingerprint/bin/fingerprint.mjs . --markdown --no-bar > /tmp/jojo-audit-fingerprint.md
+```
+
+Enumerate auditable files:
 
 ```
 find . -type f -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/dist/*' -not -path '*/build/*' -not -path '*/.next/*' -not -path '*/coverage/*' -not -path '*/__pycache__/*' -not -path '*/.venv/*' -not -path '*/vendor/*' -not -path '*/.cache/*' | head -500
@@ -48,6 +56,10 @@ Also gather a tree overview:
 ```
 find . -type d -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/dist/*' -not -path '*/build/*' -not -path '*/.next/*' -not -path '*/coverage/*' -not -path '*/__pycache__/*' -not -path '*/.venv/*' -not -path '*/vendor/*' -not -path '*/.cache/*' -maxdepth 3 | sort
 ```
+
+After the fingerprint call completes, use the Read tool to load `/tmp/jojo-audit-fingerprint.md`. Extract the content between the `~~~` fences (the block beginning with `PROJECT CONTEXT (best-effort...`) and hold it as **FINGERPRINT_CONTEXT** — this gets injected into every subagent prompt in Step 4. Hold the full markdown (heading, bullets, components, prompt block) as **FINGERPRINT_MARKDOWN** — this is what Step 1d displays to the user.
+
+If fingerprint produced an empty result (e.g., a pure docs repo with no detected languages), set FINGERPRINT_CONTEXT to `null` and omit the Project Context section from subagent prompts in Step 4. Still show whatever FINGERPRINT_MARKDOWN contains in Step 1d.
 
 ### 1b. Apply scope
 
@@ -81,16 +93,19 @@ Create a list of files to audit (referred to as FILE_MANIFEST below). This is th
 
 ### 1d. Summarize for the user
 
-Display a brief summary before proceeding:
+Emit FINGERPRINT_MARKDOWN (loaded in Step 1a) verbatim — do not wrap it in a code fence, it is already formatted markdown with its own `### Fingerprint:` heading, bullet list, components section, and `~~~` prompt block.
+
+Then append an "Audit Scope" block underneath with the operational numbers fingerprint does not cover:
 
 ```
-## Codebase Audit Scope
+## Audit Scope
 
 Files to audit: N
-Directories: list of top-level dirs
-Languages detected: [inferred from extensions]
 Excluded: [count] files (binary/lock/generated/vendor)
+Scope: [full codebase | path from $ARGUMENTS | user-selected in Step 1b]
 ```
+
+Do NOT re-list languages or frameworks in the Audit Scope block — fingerprint's markdown already covers that.
 
 ---
 
@@ -292,6 +307,10 @@ You are a code reviewer performing a full codebase audit. Review the project acc
 ## Your Reviewer Personality
 
 [PASTE THE EXTRACTED PERSONALITY BLOCK FOR THIS SPECIFIC REVIEWER HERE]
+
+## Project Context
+
+[PASTE FINGERPRINT_CONTEXT HERE — the "PROJECT CONTEXT" block extracted from /tmp/jojo-audit-fingerprint.md in Step 1a. Omit this entire section (heading and all) if FINGERPRINT_CONTEXT is null.]
 
 ## Audit Scope
 
