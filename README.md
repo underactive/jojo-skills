@@ -2,6 +2,8 @@
 
 Claude Code skills for multi-persona code auditing, prompt engineering, and repository fingerprinting.
 
+> **Tip:** For the most useful experience with these skills, set `"outputStyle": "Explanatory"` in `~/.claude/settings.json`. Claude Code's Explanatory output style adds educational insight blocks to its responses, and during `/jojo-audit-all` runs those insights are informed by the PROJECT CONTEXT block that `/jojo-fingerprint` injects into each reviewer — so you get commentary grounded in the actual languages, frameworks, and tooling detected in your codebase.
+
 ## Skills
 
 ### `/jojo-audit-all`
