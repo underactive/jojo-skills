@@ -28,6 +28,14 @@ Same workflow as above, but reviews uncommitted git changes (`git diff` + `git d
 /jojo-audit-changes Martin Fowler, Sandi Metz      # specific personas
 ```
 
+### `/jojo-summarize`
+
+Emits a self-contained handoff summary of the current conversation plus a ready-to-paste resume prompt, so you can run `/clear` and continue in a fresh context without losing state. Useful when a conversation has grown long or wandered.
+
+```
+/jojo-summarize
+```
+
 ### `/jojo-prompt-clear`
 
 Rewrites prompts using the CLEAR framework:
@@ -97,11 +105,12 @@ Copy skill directories to `~/.claude/skills/`:
 ```sh
 cp -r jojo-audit-all ~/.claude/skills/
 cp -r jojo-audit-changes ~/.claude/skills/
+cp -r jojo-summarize ~/.claude/skills/
 cp -r jojo-prompt-clear ~/.claude/skills/
 cp -r jojo-fingerprint ~/.claude/skills/
 ```
 
-Skills appear as `/jojo-audit-all`, `/jojo-audit-changes`, `/jojo-prompt-clear`, and `/jojo-fingerprint` in Claude Code.
+Skills appear as `/jojo-audit-all`, `/jojo-audit-changes`, `/jojo-summarize`, `/jojo-prompt-clear`, and `/jojo-fingerprint` in Claude Code.
 
 `/jojo-fingerprint` requires Node 20+ on `$PATH`. The other skills have no runtime dependencies.
 

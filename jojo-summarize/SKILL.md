@@ -1,5 +1,5 @@
 ---
-name: jojo-clear
+name: jojo-summarize
 description: Emit a self-contained handoff summary of the current conversation plus a ready-to-paste resume prompt, so the user can run /clear and continue in a fresh context without losing state. Use when the conversation has grown long, has wandered, or the user explicitly asks to compact and continue.
 user-invocable: true
 ---
